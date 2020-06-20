@@ -274,11 +274,17 @@ function textToGroup(group, permission) {
   return "na";
 }
 
+/** Keeps desired settings constantly. DO NOT CLOG THIS, LOOPS CONSTANTLY */
 function AdjustSettings() {
   //Fixes empty name in case of weird mess up
   if (cursedConfig.slaveIdentifier == "")
     cursedConfig.slaveIdentifier = Player.Name;
 
+  // Remove self own
+  cursedConfig.mistresses = cursedConfig.mistresses.filter(M => M != Player.MemberNumber);
+  cursedConfig.owners = cursedConfig.owners.filter(M => M != Player.MemberNumber);
+    
+  
   //Verifies if a mistress is here
   if (cursedConfig.disaledOnMistress || cursedConfig.enabledOnMistress) {
     cursedConfig.mistressIsHere = false;
@@ -328,6 +334,16 @@ function AdjustSettings() {
       if (user.Nickname == user.SavedName) {
         user.RespectNickname = false;
       }
+    });
+  } catch (err) { console.error("Curse: failed to update a name", err); }
+  try {
+    //Save real name, restores if curse is not running
+    ChatRoomCharacter.forEach(char => {
+        let user = cursedConfig.charData.find(c => parseInt(char.MemberNumber) == c.Number);
+        if (!user || !user.SavedName || !user.Nickname) return;
+        let NameToDisplay = cursedConfig.hasIntenseVersion && cursedConfig.isRunning && ChatRoomSpace != "LARP" && !cursedConfig.blacklist.includes(char.MemberNumber.toString()) && !Player.BlackList.includes(char.MemberNumber) && !Player.GhostList.includes(char.MemberNumber) ? user.Nickname : user.SavedName;
+        char.Name = NameToDisplay;
+        char.DisplayName = NameToDisplay;
     });
   } catch (err) { console.error("Curse: failed to update a name", err); }
 }

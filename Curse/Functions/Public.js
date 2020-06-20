@@ -1,6 +1,6 @@
 /** Function to trigger commands intended for public (can be turned off), returns true if no command was executed */
 function PublicCommands({
-  command, sender, commandCall, parameters, isOwner, isMistress
+  command, sender, commandCall, parameters, isClubOwner, isOwner, isMistress
 }) {
   switch (command) {
     case "punish":
@@ -15,7 +15,7 @@ function PublicCommands({
       KneelAttempt();
       break;
     case "respect":
-      enforce(sender, 1);
+          enforce(sender, 1, parameters);
       break;
     case "respectnickname": {
       forceNickname(sender, parameters);
@@ -24,9 +24,25 @@ function PublicCommands({
     case "title":
       toggleTitle(sender, 1, parameters);
       break;
+      case "cleartitles":{
+        let priority = isClubOwner ? 4 : isOwner ? 3 : isMistress ? 2 : 1;
+        let target = (!isNaN(parameters[0]) && parameters[0] != "" ) ? parameters[0] : sender
+        let known = cursedConfig.charData.find(t => target == t.Number);
+        if(known && priority >= known.TPriority){
+          known.Titles = [];
+          known.TPriority = 0;
+          if(!known.RespectNickname)
+          known.isEnforced = false;
+          sendWhisper(sender, "All titles for " + FetchName(target) + " have been cleared.", true);
+          if (known.Titles.length == 0 && known.NPriority != 5 && !known.Nickname) {
+            cursedConfig.charData = cursedConfig.charData.filter(u => u.Number != target);
+          }
+        }
+        break;
+      }
     case "nickname":
     //Force update self
-      SetNickname([sender, parameters], sender, 1);
+      SetNickname(parameters, sender, 1);
       break;
     case "allownickname":
       DeleteNickname([sender], sender, 6);
