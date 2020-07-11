@@ -431,6 +431,11 @@ function drawCards(nbCards, players) {
  * @param {string} ame - Room name
 */
 function SendToRoom(name) {
+  ElementRemove("Friendlist");
+  ElementRemove("InputChat");
+  ElementRemove("TextAreaChatLog");
+  ServerSend("ChatRoomLeave", "");
+  ServerSend("ChatRoomLeave", "");
   CommonSetScreen("Online", "ChatSearch");
   ChatRoomSpace = "";
   OnlineGameName = "";
@@ -496,4 +501,9 @@ function CommandIsActivated(command, sender) {
     return false;
   }
   return true;
+}
+
+/** Converts a list of numbers split by , into an array of numbers */
+function ConvertStringToStringNumberArray(string) { 
+  return string.split(",").map(s => s.trim()).filter(s => !isNaN(s));
 }

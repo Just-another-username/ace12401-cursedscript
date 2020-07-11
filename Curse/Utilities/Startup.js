@@ -99,9 +99,9 @@ function InitCleanup() {
         case "hasCursedGag":
           toggleCurseItem({ name: "BallGag", group: "ItemMouth", forceAdd: true });
           break;
-        case "hasCursedMittens":
+       /* case "hasCursedMittens":
           toggleCurseItem({ name: "LeatherMittens", group: "ItemHands", forceAdd: true });
-          break;
+          break;*/
         case "hasCursedPaws":
           toggleCurseItem({ name: "PawMittens", group: "ItemHands", forceAdd: true });
           break;
@@ -130,6 +130,8 @@ function InitCleanup() {
         case "hasCursedNakedness":
           procCursedNaked(true);
           break;
+        default:
+          break;
       }
     }
   });
@@ -138,7 +140,7 @@ function InitCleanup() {
   CheckEnforceMigration();
 
   //Clean deprecated props
-  const toDelete = ["punishmentColor", "hasCursedBunny", "lastWardrobeLock", "cursedItems", "nicknames", "enforced", ...oldCurses];
+  const toDelete = ["punishmentColor", "shouldntOrgasm", "hasCursedBunny", "lastWardrobeLock", "cursedItems", "nicknames", "enforced", ...oldCurses];
   toDelete.forEach(prop => delete cursedConfig[prop]);
 
   //Cleans dupes and bad stuff

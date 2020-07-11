@@ -70,12 +70,24 @@ function InitAlteredFns() {
     let backupGamblingRun = GamblingRun;
     GamblingRun = function (...rest) {
       if (cursedConfig.isRunning && cursedConfig.hasIntenseVersion && cursedConfig.hasNoMaid) { 
-        alert("Gambling Hall is disabled when the no NPC rescue curse is enabled. Turn off the curse temporarily if she wish to come in. ->Going back to the main hall <-");
+        alert("Gambling Hall is disabled when the no NPC rescue curse is enabled. Turn off the curse temporarily if you wish to come in. ->Going back to the main hall <-");
         CommonSetScreen("Room", "MainHall");
         
         return;
       }
       backupGamblingRun(...rest);
+    };
+  }
+  if (window.NurseryRun) {
+    let backupNurseryRun = NurseryRun;
+    NurseryRun = function (...rest) {
+      if (cursedConfig.isRunning && cursedConfig.hasIntenseVersion && cursedConfig.hasNoMaid) { 
+        alert("The nursery is disabled when the no NPC rescue curse is enabled. Turn off the curse temporarily if you wish to come in. ->Going back to the main hall <-");
+        CommonSetScreen("Room", "MainHall");
+        
+        return;
+      }
+      backupNurseryRun(...rest);
     };
   }
   
@@ -182,7 +194,7 @@ function InitAlteredFns() {
       let isActivated = cursedConfig.isRunning && ChatRoomSpace != "LARP";
       if (rest[0].ID == 0 && isActivated) {
         cursedConfig.orgasms++;
-        if (cursedConfig.shouldntOrgasm) {
+        if (cursedConfig.forbidorgasm) {
           TriggerPunishment(4);
           SendChat("The curse on " + Player.Name + " punishes her for orgasming when her owner forbade her.");
         }
@@ -306,7 +318,7 @@ function InitBasedFns() {
   if (window.MainHallClick) {
     let backupMainHallClick = MainHallClick;
     MainHallClick = (...rest) => {
-      if ((MouseX >= 45) && (MouseX < 135) && (MouseY >= 665) && (MouseY < 755)) {
+      if (CommonIsClickAt(45, 665, 135-45, 755-665)) {
         CurseRoomAce = null;
         CurseRoomRun();
         CurrentScreen = "CurseRoom";
